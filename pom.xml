@@ -8,7 +8,10 @@
 	<version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>api</module>
-    </modules>
+        <module>provider</module>
+		<module>api</module>
+		<module>consumer</module>
+	</modules>
     <packaging>pom</packaging>
 
 	<name>demo</name>
