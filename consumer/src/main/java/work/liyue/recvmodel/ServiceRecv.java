@@ -1,4 +1,4 @@
-package work.liyue;
+package work.liyue.recvmodel;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
@@ -9,6 +9,11 @@ import work.api.SayHello;
  */
 @Component
 public class ServiceRecv {
-    @Reference(interfaceName = "sayHello")
-    public SayHello sayHello;
+
+    @Reference()
+    private static SayHello sayHello;
+
+    public static SayHello getSayHello() {
+        return sayHello;
+    }
 }
