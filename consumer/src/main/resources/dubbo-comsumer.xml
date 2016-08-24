@@ -7,16 +7,16 @@
        default-lazy-init="false">
 
     <!-- 提供方应用名称信息，这个相当于起一个名字，我们dubbo管理页面比较清晰是哪个应用暴露出来的 -->
-    <dubbo:application name="dubbo-consumer-dsp"/>
+    <!--<dubbo:application name="dubbo-consumer-dsp"/>-->
 
     <!-- 具体的实现bean,方式1:通过注入的方式 -->
-    <dubbo:annotation package="work.liyue.recvmodel" />
+    <!--<dubbo:annotation package="work.liyue.recvmodel" />-->
     <!-- 具体的实现bean -->
     <!-- <bean id="demoService" class="com.company.DemoServiceImpl" /> -->
 
     <!-- 使用zookeeper注册中心暴露服务地址 -->
-    <dubbo:registry address="redis://127.0.0.1:6379"/>
-
+    <!--<dubbo:registry address="redis://127.0.0.1:6379"/>-->
+    <dubbo:reference id="sayHello" interface="work.api.SayHello"/>
     <!-- 声明需要暴露的服务接口 -->
     <!--<dubbo:service interface="com.company.DemoService" ref="demoService" />-->
 

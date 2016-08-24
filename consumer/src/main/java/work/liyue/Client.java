@@ -1,24 +1,41 @@
 package work.liyue;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import work.api.SayHello;
 import work.liyue.recvmodel.ServiceRecv;
 
-import static work.liyue.recvmodel.ServiceRecv.getSayHello;
 
 /**
  * Created by hzliyue1 on 2016/8/18 ,0:37.
  */
-@SpringBootApplication
+@RunWith(SpringJUnit4ClassRunner.class)
 @ImportResource("classpath:dubbo-comsumer.xml")
+@SpringBootApplication
 public class Client {
-    private static ServiceRecv serviceRecv = new ServiceRecv();
-    public static void main(String[] args) {
+
+    @Autowired
+    SayHello sayHello;
+
+    @Test
+    public void say(){
+        String[] args = {""};
         ConfigurableApplicationContext run =   SpringApplication.run(Client.class, args);
-//        ServiceRecv bean = run.getBean(ServiceRecv.class);
-//
-        System.out.println(getSayHello().sayHello("here i am "));
+        System.out.println(sayHello.sayHello("adadasd"));
     }
+//    public static void main(String[] args) {
+//        ConfigurableApplicationContext run =  SpringApplication.run(Client.class, args);
+////
+////        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:dubbo-comsumer.xml");
+////        SayHello sayHello = (SayHello)context.getBean("sayHello");
+////
+////        System.out.println(sayHello.sayHello("asdasd"));
+//    }
 }

@@ -1,19 +1,35 @@
 package work.liyue.recvmodel;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import org.springframework.stereotype.Component;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import work.api.SayHello;
+import work.liyue.Client;
 
 /**
  * Created by hzliyue1 on 2016/8/18 ,1:48.
  */
-@Component
+
+
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes=Client.class)
 public class ServiceRecv {
 
-    @Reference()
-    private static SayHello sayHello;
+    @Autowired
+    private  SayHello sayHello;
 
-    public static SayHello getSayHello() {
+    public  SayHello getSayHello() {
         return sayHello;
     }
+
+    @Test
+    public void say(){
+        System.out.println(sayHello.sayHello("adadasd"));
+    }
+
+
 }

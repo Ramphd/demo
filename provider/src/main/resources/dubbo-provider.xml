@@ -10,7 +10,7 @@
     <!--<dubbo:application name="dubbo-provider-dsp"/>-->
 
     <!-- 具体的实现bean,方式1:通过注入的方式 -->
-    <dubbo:annotation package="work.liyue.service" />
+    <!--<dubbo:annotation package="work.liyue.service" />-->
     <!-- 具体的实现bean -->
     <!-- <bean id="demoService" class="com.company.DemoServiceImpl" /> -->
 
@@ -19,5 +19,9 @@
 
     <!-- 声明需要暴露的服务接口 -->
     <!--<dubbo:service interface="com.company.DemoService" ref="demoService" />-->
+    <dubbo:service  interface="work.api.SayHello" ref="sayHello" />
+
+    <!-- 具体的实现bean -->
+    <bean id="sayHello" class="work.liyue.service.SayHelloImpl"/>
 
 </beans>
