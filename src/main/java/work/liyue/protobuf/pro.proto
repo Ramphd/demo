@@ -1,0 +1,6 @@
+syntax = "proto3";
+message HelloPB{
+
+     int32 i = 1;
+     string j = 2;
+}
