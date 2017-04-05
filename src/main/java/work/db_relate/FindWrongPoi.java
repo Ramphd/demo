@@ -14,13 +14,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
  * Created by hzliyue1 on 2017/03/21,16:00.
- * 解决寻找有问题的docId，这种doc是在推荐过程上面，依据的POI或者MAIN_TAG的点击率与对文章建模生成的POI或者MAIN_TAG权值不符；
+ * 马俊霞的程序
  */
-public class FindWrongPoiTag {
+public class FindWrongPoi {
     
     private static BufferedWriter writer = null;
     private static double contentIValue = 0;
@@ -47,11 +48,11 @@ public class FindWrongPoiTag {
             
             newsConn = Config.getNewsConnection();
             recsysConn = Config.getRecsysConnection();
-            for (String s : Config.getDistinctDocIdSet(Config.getNewsConnection())) {
+            for (String s : Config.getDistinctDocIdSet(newsConn)) {
                 docId = s;
                 //            String docId = "0001_2242013";
-                String newsSql = Config.getNewsSql(docId);
-                Map<String, Map<String, Double>> retMap = Config.getNestMap(newsSql, newsConn);
+                String newsSql = Config.getNewsSql(docId, "P");
+                Map<String, Map<String, Double>> retMap = Config.getNestMap(newsSql, newsConn, "poi");
                 //                String recsysSql = Config.getRecsysSql(docId);
                 //                Map<String, String> tagPoiTitleMap = Config.getTagPoiMap(recsysSql, recsysConn);
                 
@@ -70,6 +71,21 @@ public class FindWrongPoiTag {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(docId);
+        } finally {
+            if (newsConn != null) {
+                try {
+                    newsConn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (recsysConn != null) {
+                try {
+                    recsysConn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         
         System.out.println("done!");
@@ -81,6 +97,8 @@ public class FindWrongPoiTag {
         List<String> contentList = new ArrayList<>(contentMap.keySet());
         
         //        if (tagWordMap != null) {
+//        Set<String> retSet = new HashSet<>();
+//        int flag = 0;
         L:
         for (int i = 0; i < contentList.size(); i++) {
             for (int j = i + 1; j < contentList.size(); j++) {
@@ -89,17 +107,41 @@ public class FindWrongPoiTag {
                 if (isReachCondition(contentMap, null, contentI, contentJ)) {
                     String titleAndUrl = Config.getTitleAndUrl(docId, recsysConn);
                     String outRet = docId + "\t" + kind + "\t" + contentI + "\t" + contentIValue + "\t" + contentJ + "\t" + contentJValue + "\t" + titleAndUrl;
-                    
+        
                     //                        System.out.println(outRet);
                     writer.write(outRet);
                     writer.newLine();
                     writer.flush();
                     break L;
                 }
+//                contentIValue = contentMap.get(contentI);
+//                contentJValue = contentMap.get(contentJ);
+//                if (contentIValue > 8.0 || contentJValue > 8.0) {
+//                    flag = 1;
+//                    break L;
+//                }
+//                String ret1  = contentI + "\t" + contentIValue;
+//                String ret2 = contentJ + "\t" + contentJValue;
+//                retSet.add(ret1);
+//                retSet.add(ret2);
             }
         }
+//        if (flag == 0) {
+//            StringBuilder sb = new StringBuilder();
+//            for (String s : retSet) {
+//                sb.append(s).append("\t");
+//            }
+//            String titleAndUrl = Config.getTitleAndUrl(docId, recsysConn);
+//            String outRet = docId + "\t" + titleAndUrl + "\t" + sb.toString();
+//
+//            //                        System.out.println(outRet);
+//            writer.write(outRet);
+//            writer.newLine();
+//            writer.flush();
+//        }
         //        }
     }
+    
     
     private static Map<String, Double> getPoiWordMap(String poiWord) {
         
@@ -108,19 +150,6 @@ public class FindWrongPoiTag {
             Map<String, Double> scoreMap = new HashMap<>();
             for (String poiKey : jsonObject.keySet()) {
                 scoreMap.put(poiKey, jsonObject.getDouble(poiKey));
-            }
-            return scoreMap;
-        }
-        return null;
-    }
-    
-    private static Map<String, Double> getTagWordMap(String tagWord) {
-        
-        if (StringUtils.isNotBlank(tagWord) && tagWord.length() > 4 && JSONObject.parseArray(tagWord).size() > 0) {
-            Map<String, Double> scoreMap = new HashMap<>();
-            for (Object object : JSONObject.parseArray(tagWord)) {
-                scoreMap.put(((JSONObject) object).getString("fullPath"),
-                             Double.parseDouble(((JSONObject) object).getString("score")));
             }
             return scoreMap;
         }
